@@ -6,6 +6,7 @@ const ACCESS_KEY = import.meta.env.VITE_APP_ACCESS_KEY;
 function App() {
   const [currentImage, setCurrentImage] = useState(null);
   const [prevImages, setPrevImages] = useState([]);
+  const [quota, setQuota] = useState(null);
   const [inputs, setInputs] = useState({
   url: "",
   format: "",
@@ -55,6 +56,7 @@ else {
   setCurrentImage(json.url);
   setPrevImages((images) => [...images, json.url]);
   reset();
+  getQuota;
 }
 }
 const reset = () => {
@@ -66,6 +68,13 @@ const reset = () => {
     width: "",
     height: "",
   });
+}
+const getQuota = async () => {
+  const response = await fetch("https://api.apiflash.com/v1/urltoimage/quota?access_key=" + ACCESS_KEY);
+  const result = await response.json();
+
+  setQuota(result);
+
 }
   return (
    <div className="whole-page">
@@ -115,6 +124,14 @@ const reset = () => {
 <div className="container">
   <Gallery images={prevImages} />
 </div>
+{quota ? (
+  <p className="quota">
+    {" "}
+    Remaining API calls: {quota.remaining} out of {quota.limit}
+  </p>
+) : (
+  <p></p>
+)}
     </div>
   );
 }
